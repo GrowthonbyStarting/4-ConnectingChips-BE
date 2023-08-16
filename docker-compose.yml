@@ -1,0 +1,26 @@
+version: '3.0'
+services:
+  db:
+    image: mysql
+    environment:
+      MYSQL_DATABASE: chips
+      MYSQL_ROOT_PASSWORD: 1234
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    ports:
+      - '3306:3306'
+  server:
+    build:
+      context: ./
+      dockerfile: ./Dockerfile.development
+    environment:
+      - NODE_ENV=development
+      - PORT=3000
+      - DATABASE_URL=mysql://root:1234@db:3306/chips
+      - MYSQL_CHARSET=utf8mb4
+    ports:
+      - '3000:3000'
+    restart: always
+    volumes:
+      - ./src/:/src/
+    depends_on:
+      - db
