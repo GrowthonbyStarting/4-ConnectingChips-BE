@@ -43,23 +43,11 @@ export class UserService {
     const validatePassword = await bcrypt.compare(password, user.password);
 
     if (!validatePassword) {
-      throw new BadRequestException(`password(${password}) is not equal.`);
+      throw new BadRequestException(`email이나 password를 확인해주세요`);
     }
     const payload = { id: user.id };
     return {
       access_token: await this.jwtService.signAsync(payload),
     };
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
-  }
-
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} user`;
   }
 }
