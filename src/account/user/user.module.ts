@@ -1,4 +1,4 @@
-import { JwtStrategy } from './../security/passport.jwt.strategy';
+import { JwtStrategy } from '../../security/passport.jwt.strategy';
 import { Module } from '@nestjs/common';
 import { UserService } from './user.service';
 import { UserController } from './user.controller';
