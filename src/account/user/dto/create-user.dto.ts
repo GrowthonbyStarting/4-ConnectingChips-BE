@@ -1,5 +1,5 @@
 import { IsEmail, IsNotEmpty, IsString, Matches } from 'class-validator';
-import { Match } from '../../libs/class-validator';
+import { Match } from '../../../libs/class-validator';
 export class CreateUserDto {
   @IsNotEmpty()
   @IsEmail()
