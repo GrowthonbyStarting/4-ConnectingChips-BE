@@ -1,7 +1,7 @@
 import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from './../../../prisma/prisma.service';
 import { Injectable, BadRequestException } from '@nestjs/common';
-import { CreateAdminDto } from './dto/create-admin.dto';
+import { CreateAdminDto, SignInDto } from './dto/create-admin.dto';
 import { UpdateAdminDto } from './dto/update-admin.dto';
 import * as bcrypt from 'bcrypt';
 
@@ -11,17 +11,17 @@ export class AdminService {
   async create(createAdminDto: CreateAdminDto) {
     await this.prisma.$transaction(async (prisma) => {
       const { email, password } = createAdminDto;
-      const existingUser = await this.prisma.user.findUnique({
+      const existingUser = await this.prisma.admin.findUnique({
         where: { email },
       });
 
       if (existingUser)
         throw new BadRequestException(`User(${email}) is exist.`);
 
-      const SALT = Number(process.env.SALT);
+      const SALT = Number(process.env.ADMIN_SALT);
       const hashedPassword = await bcrypt.hash(password, SALT);
 
-      const admin = await prisma.user.create({
+      const admin = await prisma.admin.create({
         data: {
           email,
           password: hashedPassword,
@@ -29,5 +29,25 @@ export class AdminService {
       });
     });
     return { result: '회원가입 성공' };
+  }
+  async login(signInDto: SignInDto) {
+    const { email, password } = signInDto;
+
+    const user = await this.prisma.admin.findUnique({
+      where: { email },
+    });
+
+    if (!user)
+      throw new BadRequestException(`email이나 password를 확인해주세요`);
+
+    const validatePassword = await bcrypt.compare(password, user.password);
+
+    if (!validatePassword) {
+      throw new BadRequestException(`email이나 password를 확인해주세요`);
+    }
+    const payload = { id: user.id };
+    return {
+      access_token: await this.jwtService.signAsync(payload),
+    };
   }
 }
