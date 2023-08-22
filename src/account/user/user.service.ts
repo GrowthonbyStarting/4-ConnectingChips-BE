@@ -7,7 +7,6 @@ import * as bcrypt from 'bcrypt';
 export class UserService {
   constructor(private prisma: PrismaService, private jwtService: JwtService) {}
   async create(createUserDto: CreateUserDto) {
-    console.log(createUserDto);
     await this.prisma.$transaction(async (prisma) => {
       const {
         nickname,

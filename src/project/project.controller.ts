@@ -7,20 +7,26 @@ import {
   Patch,
   Param,
   Delete,
+  UploadedFile,
+  UseInterceptors,
 } from '@nestjs/common';
 import { ProjectService } from './project.service';
 import { CreateProjectDto } from './dto/create-project.dto';
 import { Roles } from 'src/decorators/roles.decorator';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @Controller('projects')
 export class ProjectController {
   constructor(private readonly projectService: ProjectService) {}
 
-  @Post()
+  @Post('/regist')
+  @UseInterceptors(FileInterceptor('file'))
   @Roles(ROLE.ADMIN)
-  create(@Body() createProjectDto: CreateProjectDto) {
-    console.log(createProjectDto);
-    // return this.projectService.create(createProjectDto);
+  create(
+    @Body() createProjectDto: CreateProjectDto,
+    @UploadedFile() file: Express.Multer.File,
+  ) {
+    return this.projectService.create(createProjectDto, file);
   }
 
   // @Get()

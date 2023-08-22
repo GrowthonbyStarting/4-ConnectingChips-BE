@@ -1,11 +1,25 @@
+import { ImagesService } from './../image/images.service';
+import { PrismaService } from './../../prisma/prisma.service';
 import { Injectable } from '@nestjs/common';
 import { CreateProjectDto } from './dto/create-project.dto';
-import { UpdateProjectDto } from './dto/update-project.dto';
 
 @Injectable()
 export class ProjectService {
-  create(createProjectDto: CreateProjectDto) {
-    return 'This action adds a new project';
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly imagesService: ImagesService,
+  ) {}
+  async create(createProjectDto: CreateProjectDto, file: Express.Multer.File) {
+    const { title, type, roles, contents } = createProjectDto;
+    const projectImage = await this.imagesService.create(file);
+
+    const project = this.prisma.project.create({
+      title,
+      tabs: type,
+      roles,
+      contents,
+      image: { connect: { id: projectImage.id } },
+    });
   }
 
   // findAll() {
