@@ -20,3 +20,14 @@ export class CreateAdminDto {
   @Match('password', { message: '비밀번호가 일치하지 않습니다.' })
   confirmPassword: string;
 }
+
+export class SignInDto {
+  @IsNotEmpty()
+  @IsEmail()
+  @IsString()
+  email: string;
+
+  @IsNotEmpty()
+  @IsString()
+  password: string;
+}

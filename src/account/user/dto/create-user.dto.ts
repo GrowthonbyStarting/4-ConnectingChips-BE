@@ -1,10 +1,10 @@
 import { IsEmail, IsNotEmpty, IsString, Matches } from 'class-validator';
 import { Match } from '../../../libs/class-validator';
+import { Gender } from '@prisma/client';
 export class CreateUserDto {
   @IsNotEmpty()
-  @IsEmail()
   @IsString()
-  email: string;
+  nickname: string;
 
   @IsNotEmpty()
   @IsString()
@@ -18,13 +18,22 @@ export class CreateUserDto {
   @IsString()
   @Match('password', { message: '비밀번호가 일치하지 않습니다.' })
   confirmPassword: string;
+
+  @IsNotEmpty()
+  @IsString()
+  birthDate: string;
+
+  @IsNotEmpty()
+  @IsString()
+  gender?: Gender;
+
+  yearAndMonthOfEmployment: string;
 }
 
 export class SignInDto {
   @IsNotEmpty()
-  @IsEmail()
   @IsString()
-  email: string;
+  nickname: string;
 
   @IsNotEmpty()
   @IsString()

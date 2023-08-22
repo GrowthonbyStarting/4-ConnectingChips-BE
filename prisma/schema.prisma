@@ -11,24 +11,29 @@ datasource db {
 }
 
 model User {
-  id       Int    @id @default(autoincrement())
-  email    String @unique
-  password String
-  point    Int    @default(0)
-  nickname String
+  id                       Int       @id @default(autoincrement())
+  password                 String
+  nickname                 String    @unique
+  birthDate                String
+  gender                   Gender?
+  yearAndMonthOfEmployment String
+  companyEmail             String?
+  job                      String?
+  createAt                 DateTime? @default(now())
+  updateAt                 DateTime? @updatedAt
 }
 
 model Admin {
-  id        Int    @id @default(autoincrement())
-  email     String @unique
-  password  String
-  adminName String
+  id       Int    @id @default(autoincrement())
+  email    String @unique
+  password String
 }
 
 model Project {
   id       Int    @id @default(autoincrement())
   title    String
   contents String
+  rolse    String
   tabs     Tab[]
   image    Image? @relation(fields: [imageId], references: [id])
   imageId  Int?
@@ -49,4 +54,9 @@ model Image {
   updatedAt DateTime  @updatedAt()
   key       String
   Project   Project[]
+}
+
+enum Gender {
+  male
+  female
 }

@@ -1,3 +1,4 @@
+import { ROLE } from './../constant/account.constant';
 import {
   Controller,
   Get,
@@ -9,13 +10,14 @@ import {
 } from '@nestjs/common';
 import { ProjectService } from './project.service';
 import { CreateProjectDto } from './dto/create-project.dto';
-import { UpdateProjectDto } from './dto/update-project.dto';
+import { Roles } from 'src/decorators/roles.decorator';
 
 @Controller('projects')
 export class ProjectController {
   constructor(private readonly projectService: ProjectService) {}
 
   @Post()
+  @Roles(ROLE.ADMIN)
   create(@Body() createProjectDto: CreateProjectDto) {
     console.log(createProjectDto);
     // return this.projectService.create(createProjectDto);
