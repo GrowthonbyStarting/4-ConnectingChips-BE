@@ -13,11 +13,11 @@ export class CreateProjectDto {
 
   @IsString()
   @IsNotEmpty()
-  contents: string;
+  intro: string;
 
   @IsNotEmpty()
   @IsString()
-  roles: string;
+  rule: string;
 
   @IsOptional()
   image: string;

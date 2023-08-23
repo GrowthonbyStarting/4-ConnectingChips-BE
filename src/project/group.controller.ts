@@ -1,4 +1,4 @@
-import { ROLE } from './../constant/account.constant';
+import { ROLE } from '../constant/account.constant';
 import {
   Controller,
   Get,
@@ -10,14 +10,14 @@ import {
   UploadedFile,
   UseInterceptors,
 } from '@nestjs/common';
-import { ProjectService } from './project.service';
-import { CreateProjectDto } from './dto/create-project.dto';
+import { GroupService } from './group.service';
+import { CreateProjectDto } from './dto/create-group.dto';
 import { Roles } from 'src/decorators/roles.decorator';
 import { FileInterceptor } from '@nestjs/platform-express';
 
-@Controller('projects')
-export class ProjectController {
-  constructor(private readonly projectService: ProjectService) {}
+@Controller('groups')
+export class GroupController {
+  constructor(private readonly groupService: GroupService) {}
 
   @Post('/regist')
   @UseInterceptors(FileInterceptor('file'))
@@ -26,7 +26,7 @@ export class ProjectController {
     @Body() createProjectDto: CreateProjectDto,
     @UploadedFile() file: Express.Multer.File,
   ) {
-    return this.projectService.create(createProjectDto, file);
+    return this.groupService.create(createProjectDto, file);
   }
 
   // @Get()
