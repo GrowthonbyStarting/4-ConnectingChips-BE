@@ -1,20 +1,19 @@
-import { ImagesService } from './../image/images.service';
-import { PrismaService } from './../../prisma/prisma.service';
+import { ImagesService } from '../image/images.service';
+import { PrismaService } from '../../prisma/prisma.service';
 import { Injectable } from '@nestjs/common';
-import { CreateProjectDto } from './dto/create-project.dto';
+import { CreateProjectDto } from './dto/create-group.dto';
 import { targetModulesByContainer } from '@nestjs/core/router/router-module';
 
 @Injectable()
-export class ProjectService {
+export class GroupService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly imagesService: ImagesService,
   ) {}
   async create(createProjectDto: CreateProjectDto, file: Express.Multer.File) {
-    const { title, type, roles, contents } = createProjectDto;
-    console.log(title, type, roles, contents);
+    console.log(createProjectDto);
+    //const { title, type, intro, rule } = createProjectDto;
     // const projectImage = await this.imagesService.create(file);
-
     // const projectTabs = {
     //   create: type.localeCompare()
     // }

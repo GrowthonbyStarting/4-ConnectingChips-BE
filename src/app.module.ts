@@ -1,3 +1,4 @@
+import { GruopModule } from './project/gruop.module';
 import { AdminModule } from './account/admin/admin.module';
 import { ImagesModule } from './image/images.module';
 import { S3Module } from './s3/s3.module';
@@ -7,7 +8,6 @@ import { ConfigModule } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UserModule } from './account/user/user.module';
-import { ProjectModule } from './project/project.module';
 
 @Module({
   imports: [
@@ -15,7 +15,7 @@ import { ProjectModule } from './project/project.module';
     PrismaModule,
     UserModule,
     AdminModule,
-    ProjectModule,
+    GruopModule,
     S3Module,
     ImagesModule,
   ],
