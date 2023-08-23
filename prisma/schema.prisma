@@ -29,33 +29,55 @@ model Admin {
   password String
 }
 
-model Project {
+model Group {
   id        Int      @id @default(autoincrement())
   title     String
-  contents  String
-  rolse     String
+  intro     String
+  rule      String
   tabs      Tab[]
   image     Image?   @relation(fields: [imageId], references: [id])
   imageId   Int?
   createdAt DateTime @default(now())
   updatedAt DateTime
+  Post      Post[]
+}
+
+model Post {
+  id        Int       @id @default(autoincrement())
+  image     Image?    @relation(fields: [imageId], references: [id])
+  imageId   Int?
+  contents  String
+  Gropu     Group     @relation(fields: [groupId], references: [id])
+  groupId   Int
+  createdAt DateTime  @default(now())
+  updatedAt DateTime
+  Comment   Comment[]
+  userId    Int
+}
+
+model Comment {
+  id     Int    @id @default(autoincrement())
+  Post   Post   @relation(fields: [postId], references: [id])
+  postId Int
+  text   String
 }
 
 model Tab {
-  id        Int      @id @default(autoincrement())
-  title     String
-  type      String
-  Project   Project? @relation(fields: [projectId], references: [id])
-  projectId Int?
+  id      Int    @id @default(autoincrement())
+  title   String
+  type    String
+  Group   Group? @relation(fields: [groupId], references: [id])
+  groupId Int?
 }
 
 model Image {
-  id        Int       @id @default(autoincrement())
+  id        Int      @id @default(autoincrement())
   url       String
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt()
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt()
   key       String
-  Project   Project[]
+  Group     Group[]
+  Post      Post[]
 }
 
 enum Gender {
