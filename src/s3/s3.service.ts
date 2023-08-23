@@ -1,5 +1,3 @@
-import { S3_BUCKET_NAME } from 'src/config/s3.config';
-
 import { ReadStream } from 'fs';
 import {
   PutObjectCommand,
@@ -7,13 +5,14 @@ import {
   PutObjectCommandOutput,
   S3Client,
 } from '@aws-sdk/client-s3';
+import { Injectable } from '@nestjs/common';
 const {
   S3_AWSACCESS_KEY_ID,
   S3_AWS_SECRET_ACCESS_KEY,
   CLOUD_FRONT_URL,
   S3_REGION,
+  S3_BUCKET_NAME,
 } = process.env;
-import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class S3Service {
