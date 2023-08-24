@@ -2,7 +2,7 @@ name: connetingChips CI/CD
 
 on:
   push:
-    branches:['project']
+    branches:['dev']
 
   jobs:
     build:
