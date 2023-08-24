@@ -1,0 +1,10 @@
+{
+    "apps":[
+        {
+            "name":"chips",
+            "scrpit":"src/main.ts",
+            "instance":0,
+            "exec_mode":"cluster"
+        }
+    ]
+}
