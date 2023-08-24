@@ -1,28 +1,31 @@
-name: connetingChips CI/CD
+name: connectingChips CI/CD
 
 on:
   push:
-    branches:['dev']
+    branches:
+      - dev
 
-  jobs:
-    build:
-      runs-on: ubuntu-latest
+jobs:
+  build:
+    runs-on: ubuntu-latest
 
-      strategy:
-        matrix:
-          node-version: [18.x]
+    strategy:
+      matrix:
+        node-version: [18.x]
 
-      step:
-       - use: actions/checkout@v3
-       - name: Use Node.js ${{ matrix.node-version }}
-         use: actions/setup-node@v3
-         with:
-           node-version: ${{ matrix.node-version }}
-           cache: 'npm'
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
-       - name: Cache node modules # node modules 캐싱
-         uses: actions/cache@v2
-         with:
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+
+      - name: Cache node modules
+        uses: actions/cache@v2
+        with:
           path: node_modules
           key: ${{ runner.OS }}-build-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
@@ -35,13 +38,13 @@ on:
       - name: build
         run: npm run build
 
-      - name: Upload to S3 # Upload build file to S3
+      - name: Upload to S3
         run: aws s3 cp ./nest.zip s3://${{ secrets.AWS_S3_BUCKET }}/public/
 
-      - name: Deploy # Deploy to EC2
-        run: aws deploy create-deployment
-          --application-name link-gather-nest
-          --deployment-config-name CodeDeployDefault.AllAtOnce
-          --deployment-group-name link-gather-nest
-          --s3-location bucket=${{ secrets.AWS_S3_BUCKET }},key=public/nest.zip,bundleType=zip  
-   
+      - name: Deploy
+        run: |
+          aws deploy create-deployment \
+            --application-name link-gather-nest \
+            --deployment-config-name CodeDeployDefault.AllAtOnce \
+            --deployment-group-name link-gather-nest \
+            --s3-location bucket=${{ secrets.AWS_S3_BUCKET }},key=public/nest.zip,bundleType=zip
