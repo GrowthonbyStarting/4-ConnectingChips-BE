@@ -10,20 +10,20 @@ export class AdminService {
   constructor(private prisma: PrismaService, private jwtService: JwtService) {}
   async create(createAdminDto: CreateAdminDto) {
     await this.prisma.$transaction(async (prisma) => {
-      const { email, password } = createAdminDto;
+      const { nickname, password } = createAdminDto;
       const existingUser = await this.prisma.admin.findUnique({
-        where: { email },
+        where: { nickname },
       });
 
       if (existingUser)
-        throw new BadRequestException(`User(${email}) is exist.`);
+        throw new BadRequestException(`User(${nickname}) is exist.`);
 
       const SALT = Number(process.env.ADMIN_SALT);
       const hashedPassword = await bcrypt.hash(password, SALT);
 
       const admin = await prisma.admin.create({
         data: {
-          email,
+          nickname,
           password: hashedPassword,
         },
       });
@@ -31,10 +31,10 @@ export class AdminService {
     return { result: '회원가입 성공' };
   }
   async login(signInDto: SignInDto) {
-    const { email, password } = signInDto;
+    const { nickname, password } = signInDto;
 
     const user = await this.prisma.admin.findUnique({
-      where: { email },
+      where: { nickname },
     });
 
     if (!user)
