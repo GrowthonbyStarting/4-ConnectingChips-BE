@@ -8,7 +8,7 @@ export class CreateAdminDto {
 
   @IsNotEmpty()
   @IsString()
-  @Matches(/^[A-Za-z\d]${10,20}$/, {
+  @Matches(/^[A-Za-z0-9]{10,12}$/, {
     message: '비밀번호는 문자 및 숫자를 모두 포함한 10자리 이상이여야 합니다.',
   })
   password: string;

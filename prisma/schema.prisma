@@ -14,9 +14,9 @@ model User {
   id                       Int       @id @default(autoincrement())
   password                 String
   nickname                 String    @unique
-  birthDate                String
+  birthDate                String?
   gender                   Gender?
-  yearAndMonthOfEmployment String
+  yearAndMonthOfEmployment String?
   companyEmail             String?
   job                      String?
   createAt                 DateTime? @default(now())

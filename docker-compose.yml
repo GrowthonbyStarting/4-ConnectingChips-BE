@@ -2,6 +2,8 @@ version: '3.0'
 services:
   db:
     image: mysql
+    volumes:
+            - "./.data/db:/var/lib/mysql"
     environment:
       MYSQL_DATABASE: chips
       MYSQL_ROOT_PASSWORD: 1234

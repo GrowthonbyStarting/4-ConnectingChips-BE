@@ -38,12 +38,12 @@ export class AdminService {
     });
 
     if (!user)
-      throw new BadRequestException(`email이나 password를 확인해주세요`);
+      throw new BadRequestException(`nickname이나 password를 확인해주세요`);
 
     const validatePassword = await bcrypt.compare(password, user.password);
 
     if (!validatePassword) {
-      throw new BadRequestException(`email이나 password를 확인해주세요`);
+      throw new BadRequestException(`nickname이나 password를 확인해주세요`);
     }
     const payload = { id: user.id };
     return {
