@@ -1,3 +1,4 @@
+import { S3_BUCKET_NAME } from './../config/s3.config';
 import { ReadStream } from 'fs';
 import {
   PutObjectCommand,
@@ -6,25 +7,16 @@ import {
   S3Client,
 } from '@aws-sdk/client-s3';
 import { Injectable } from '@nestjs/common';
-const {
-  S3_AWSACCESS_KEY_ID,
-  S3_AWS_SECRET_ACCESS_KEY,
-  CLOUD_FRONT_URL,
-  S3_REGION,
-  S3_BUCKET_NAME,
-} = process.env;
 
 @Injectable()
 export class S3Service {
-  public region = S3_REGION;
-
+  public region = process.env.S3_REGION;
   public bucket = S3_BUCKET_NAME;
-
   private client = new S3Client({
-    region: S3_REGION,
+    region: process.env.S3_REGION,
     credentials: {
-      accessKeyId: S3_AWSACCESS_KEY_ID,
-      secretAccessKey: S3_AWS_SECRET_ACCESS_KEY,
+      accessKeyId: process.env.S3_AWSACCESS_KEY_ID,
+      secretAccessKey: process.env.S3_AWS_SECRET_ACCESS_KEY,
     },
   });
 
@@ -46,6 +38,6 @@ export class S3Service {
   }
 
   public getFileURLByKey(key: string): string {
-    return `${CLOUD_FRONT_URL}/${key}`;
+    return `${process.env.CLOUD_FRONT_URL}/${key}`;
   }
 }

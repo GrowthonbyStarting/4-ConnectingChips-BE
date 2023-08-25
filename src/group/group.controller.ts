@@ -14,6 +14,7 @@ import { GroupService } from './group.service';
 import { CreateProjectDto } from './dto/create-group.dto';
 import { Roles } from 'src/decorators/roles.decorator';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { Admin } from 'src/decorators/admin.decorator';
 
 @Controller('groups')
 export class GroupController {
@@ -23,7 +24,9 @@ export class GroupController {
   @UseInterceptors(FileInterceptor('file'))
   @Roles(ROLE.ADMIN)
   create(
-    @Body() createProjectDto: CreateProjectDto,
+    @Admin()
+    @Body()
+    createProjectDto: CreateProjectDto,
     @UploadedFile() file: Express.Multer.File,
   ) {
     return this.groupService.create(createProjectDto, file);

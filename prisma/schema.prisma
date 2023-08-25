@@ -34,12 +34,12 @@ model Group {
   title     String
   intro     String
   rule      String
-  tabs      Tab[]
+  tabs      String
   image     Image?   @relation(fields: [imageId], references: [id])
   imageId   Int?
   createdAt DateTime @default(now())
-  updatedAt DateTime
   Post      Post[]
+  Tab       Tab[]
 }
 
 model Post {
@@ -50,7 +50,7 @@ model Post {
   Gropu     Group     @relation(fields: [groupId], references: [id])
   groupId   Int
   createdAt DateTime  @default(now())
-  updatedAt DateTime
+  updatedAt DateTime  @updatedAt
   Comment   Comment[]
   userId    Int
 }

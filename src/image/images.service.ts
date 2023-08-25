@@ -9,7 +9,6 @@ export class ImagesService {
 
   async create(file: Express.Multer.File) {
     const fileName = uuidv4();
-    console.log(fileName);
     const ext = file.originalname.split('.')[0];
     const key = `${fileName}.${ext}`;
     const url = this.s3Service.getFileURLByKey(key);
