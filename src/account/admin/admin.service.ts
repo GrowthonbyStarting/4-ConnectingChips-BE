@@ -1,17 +1,20 @@
 import { ROLE } from './../../constant/account.constant';
-import { JwtService } from '@nestjs/jwt';
+// import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from './../../../prisma/prisma.service';
 import { Injectable, BadRequestException } from '@nestjs/common';
 import { CreateAdminDto, SignInDto } from './dto/create-admin.dto';
-import { UpdateAdminDto } from './dto/update-admin.dto';
-import * as bcrypt from 'bcrypt';
 
+import * as bcrypt from 'bcrypt';
+import { JwtPayload, sign } from 'jsonwebtoken';
 @Injectable()
 export class AdminService {
-  constructor(private prisma: PrismaService, private jwtService: JwtService) {}
+  constructor(private prisma: PrismaService) {}
   async create(createAdminDto: CreateAdminDto) {
     await this.prisma.$transaction(async (prisma) => {
-      const { nickname, password } = createAdminDto;
+      const { nickname, password, adminSignUpSecret } = createAdminDto;
+
+      if (adminSignUpSecret !== process.env.ADMIN_SIGNUP_SECRET)
+        throw new BadRequestException('');
       const existingUser = await this.prisma.admin.findUnique({
         where: { nickname },
       });
@@ -43,13 +46,19 @@ export class AdminService {
 
     const validatePassword = await bcrypt.compare(password, admin.password);
 
-    if (!validatePassword) {
+    if (!nickname || !validatePassword) {
       throw new BadRequestException(`nickname이나 password를 확인해주세요`);
     }
-    const payload = { id: admin.id, sub: admin.nickname, role: ROLE.ADMIN };
+    const payload: JwtPayload = {
+      sub: admin.nickname,
+      role: ROLE.ADMIN,
+    };
+    const secret = process.env.ADMIN_JWT_SECRET;
+    const expiresIn = '3h';
+    const token = sign(payload, secret, { expiresIn });
 
     return {
-      access_token: await this.jwtService.signAsync(payload),
+      access_token: token,
     };
   }
 }

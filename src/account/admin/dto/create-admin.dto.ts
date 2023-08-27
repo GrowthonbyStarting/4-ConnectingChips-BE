@@ -17,6 +17,9 @@ export class CreateAdminDto {
   @IsString()
   @Match('password', { message: '비밀번호가 일치하지 않습니다.' })
   confirmPassword: string;
+
+  @IsNotEmpty()
+  adminSignUpSecret: string;
 }
 
 export class SignInDto {

@@ -12,7 +12,6 @@ export class GroupService {
   async create(
     createProjectDto: CreateProjectDto,
     //  file: Express.Multer.File,
-    // admin: Admin,
   ) {
     const { title, tabs, intro, rule } = createProjectDto;
     // const projectImage = await this.imagesService.create(file);
@@ -26,7 +25,6 @@ export class GroupService {
           intro,
           rule,
           //image,
-          // adminId: admin.id,
         },
       }),
     ]);

@@ -29,7 +29,6 @@ model Admin {
   password  String
   createdAt DateTime @default(now())
   upadateAt DateTime @updatedAt
-  group     Group[]
 }
 
 model Group {
@@ -44,8 +43,6 @@ model Group {
   updatedAT DateTime @updatedAt
   Post      Post[]
   Tab       Tab[]
-  admin     Admin?   @relation(fields: [adminId], references: [id])
-  adminId   Int
 }
 
 model Post {
@@ -53,7 +50,7 @@ model Post {
   image     Image?    @relation(fields: [imageId], references: [id])
   imageId   Int?
   contents  String
-  Gropu     Group     @relation(fields: [groupId], references: [id])
+  group     Group     @relation(fields: [groupId], references: [id])
   groupId   Int
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt

@@ -10,9 +10,8 @@ import { AdminController } from './admin.controller';
   imports: [
     PassportModule,
     JwtModule.register({
-      global: true,
       secret: process.env.JWT_SECRET,
-      signOptions: { expiresIn: '3h' },
+      signOptions: { expiresIn: 60 * 60 },
     }),
   ],
 })

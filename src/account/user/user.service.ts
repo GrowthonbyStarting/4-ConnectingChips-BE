@@ -1,3 +1,4 @@
+import { sign, JwtPayload } from 'jsonwebtoken';
 import { PrismaService } from '../../../prisma/prisma.service';
 import { Injectable, BadRequestException } from '@nestjs/common';
 import { CreateUserDto, SignInDto } from './dto/create-user.dto';
@@ -45,9 +46,14 @@ export class UserService {
     if (!validatePassword) {
       throw new BadRequestException(`nickname 또는 password를 확인해주세요`);
     }
-    const payload = { id: user.id, role: ROLE.USER };
+    const payload: JwtPayload = { sub: user.nickname, role: ROLE.USER };
+
+    const secret = process.env.USER_JWT_SECRET;
+    const expiresIn = '3h';
+    const token = sign(payload, secret, { expiresIn });
+
     return {
-      access_token: await this.jwtService.signAsync(payload),
+      access_token: token,
     };
   }
 }
