@@ -3,6 +3,7 @@ import { Injectable, BadRequestException } from '@nestjs/common';
 import { CreateUserDto, SignInDto } from './dto/create-user.dto';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
+import { ROLE } from 'src/constant/account.constant';
 @Injectable()
 export class UserService {
   constructor(private prisma: PrismaService, private jwtService: JwtService) {}
@@ -44,7 +45,7 @@ export class UserService {
     if (!validatePassword) {
       throw new BadRequestException(`nickname 또는 password를 확인해주세요`);
     }
-    const payload = { id: user.id };
+    const payload = { id: user.id, role: ROLE.USER };
     return {
       access_token: await this.jwtService.signAsync(payload),
     };

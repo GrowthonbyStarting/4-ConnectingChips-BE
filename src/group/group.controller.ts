@@ -1,35 +1,28 @@
-import { ROLE } from '../constant/account.constant';
 import {
   Controller,
-  Get,
   Post,
   Body,
-  Patch,
-  Param,
-  Delete,
   UploadedFile,
   UseInterceptors,
 } from '@nestjs/common';
 import { GroupService } from './group.service';
 import { CreateProjectDto } from './dto/create-group.dto';
-import { Roles } from 'src/decorators/roles.decorator';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { Admin } from 'src/decorators/admin.decorator';
-
+import { Admin } from '../decorators/admin.decorator';
+import { Admin as TAdmin } from '@prisma/client';
 @Controller('groups')
 export class GroupController {
   constructor(private readonly groupService: GroupService) {}
 
   @Post('/regist')
   @UseInterceptors(FileInterceptor('file'))
-  @Roles(ROLE.ADMIN)
   create(
-    @Admin()
     @Body()
     createProjectDto: CreateProjectDto,
     @UploadedFile() file: Express.Multer.File,
+    @Admin() admin: TAdmin,
   ) {
-    return this.groupService.create(createProjectDto, file);
+    return this.groupService.create(createProjectDto);
   }
 
   // @Get()

@@ -36,7 +36,7 @@ lerna-debug.log*
 
 node_modules
 dist
-
+.data
 
 # environment
 .env

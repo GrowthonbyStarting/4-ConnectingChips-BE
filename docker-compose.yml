@@ -7,7 +7,8 @@ services:
     environment:
       MYSQL_DATABASE: chips
       MYSQL_ROOT_PASSWORD: 1234
-    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    command: 
+      --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
     ports:
       - '3306:3306'
   server:

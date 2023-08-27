@@ -1,3 +1,4 @@
+import { ROLE } from './../../constant/account.constant';
 import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from './../../../prisma/prisma.service';
 import { Injectable, BadRequestException } from '@nestjs/common';
@@ -33,19 +34,20 @@ export class AdminService {
   async login(signInDto: SignInDto) {
     const { nickname, password } = signInDto;
 
-    const user = await this.prisma.admin.findUnique({
+    const admin = await this.prisma.admin.findUnique({
       where: { nickname },
     });
 
-    if (!user)
+    if (!admin)
       throw new BadRequestException(`nickname이나 password를 확인해주세요`);
 
-    const validatePassword = await bcrypt.compare(password, user.password);
+    const validatePassword = await bcrypt.compare(password, admin.password);
 
     if (!validatePassword) {
       throw new BadRequestException(`nickname이나 password를 확인해주세요`);
     }
-    const payload = { id: user.id };
+    const payload = { id: admin.id, sub: admin.nickname, role: ROLE.ADMIN };
+
     return {
       access_token: await this.jwtService.signAsync(payload),
     };

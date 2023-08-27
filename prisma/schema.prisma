@@ -24,9 +24,12 @@ model User {
 }
 
 model Admin {
-  id       Int    @id @default(autoincrement())
-  nickname String @unique
-  password String
+  id        Int      @id @default(autoincrement())
+  nickname  String   @unique
+  password  String
+  createdAt DateTime @default(now())
+  upadateAt DateTime @updatedAt
+  group     Group[]
 }
 
 model Group {
@@ -38,8 +41,11 @@ model Group {
   image     Image?   @relation(fields: [imageId], references: [id])
   imageId   Int?
   createdAt DateTime @default(now())
+  updatedAT DateTime @updatedAt
   Post      Post[]
   Tab       Tab[]
+  admin     Admin?   @relation(fields: [adminId], references: [id])
+  adminId   Int
 }
 
 model Post {
