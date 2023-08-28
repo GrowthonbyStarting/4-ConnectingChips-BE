@@ -1,4 +1,4 @@
-import { ImagesService } from '../image/images.service';
+import { ImagesService } from 'src/image/images.service';
 import { PrismaService } from '../../prisma/prisma.service';
 import { Injectable } from '@nestjs/common';
 import { CreateProjectDto } from './dto/create-group.dto';
@@ -7,15 +7,13 @@ import { Admin, User } from '@prisma/client';
 @Injectable()
 export class GroupService {
   constructor(
-    private readonly prisma: PrismaService, // private readonly imagesService: ImagesService,
+    private readonly prisma: PrismaService,
+    private readonly imagesService: ImagesService,
   ) {}
-  async create(
-    createProjectDto: CreateProjectDto,
-    //  file: Express.Multer.File,
-  ) {
+  async create(createProjectDto: CreateProjectDto, file: Express.Multer.File) {
     const { title, tabs, intro, rule } = createProjectDto;
-    // const projectImage = await this.imagesService.create(file);
-    // const image = { connect: { id: projectImage.id } };
+    const projectImage = await this.imagesService.create(file);
+    const image = { connect: { id: projectImage.id } };
 
     const project = await this.prisma.$transaction([
       this.prisma.group.create({
@@ -24,7 +22,7 @@ export class GroupService {
           tabs,
           intro,
           rule,
-          //image,
+          image,
         },
       }),
     ]);
