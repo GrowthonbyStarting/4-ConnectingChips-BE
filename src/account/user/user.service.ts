@@ -16,7 +16,7 @@ export class UserService {
       });
 
       if (existingUser)
-        throw new BadRequestException(`Admin(${nickname}) is exist.`);
+        throw new BadRequestException(`이미 존재하는 닉네임 입니다.`);
 
       if (password !== confirmPassword)
         throw new BadRequestException(`비밀번호를 확인해 주세요`);

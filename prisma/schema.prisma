@@ -37,25 +37,23 @@ model Group {
   intro     String
   rule      String
   tabs      String
-  image     Image?   @relation(fields: [imageId], references: [id])
-  imageId   Int?
   createdAt DateTime @default(now())
   updatedAT DateTime @updatedAt
-  Post      Post[]
   Tab       Tab[]
+  Post      Post[]
+  Image     Image[]
 }
 
 model Post {
   id        Int       @id @default(autoincrement())
-  image     Image?    @relation(fields: [imageId], references: [id])
-  imageId   Int?
   contents  String
-  group     Group     @relation(fields: [groupId], references: [id])
-  groupId   Int
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   userId    Int
-  comment   Comment[]
+  Comment   Comment[]
+  Group     Group?    @relation(fields: [groupId], references: [id])
+  groupId   Int
+  image     Image[]
 }
 
 model Comment {
@@ -69,7 +67,7 @@ model Tab {
   id      Int    @id @default(autoincrement())
   title   String
   type    String
-  Group   Group? @relation(fields: [groupId], references: [id])
+  group   Group? @relation(fields: [groupId], references: [id])
   groupId Int?
 }
 
@@ -79,8 +77,10 @@ model Image {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt()
   key       String
-  Group     Group[]
-  Post      Post[]
+  Post      Post?    @relation(fields: [postId], references: [id])
+  postId    Int?
+  Group     Group?   @relation(fields: [groupId], references: [id])
+  groupId   Int?
 }
 
 enum Gender {

@@ -20,7 +20,7 @@ export class AdminService {
       });
 
       if (existingUser)
-        throw new BadRequestException(`User(${nickname}) is exist.`);
+        throw new BadRequestException(`이미 존재하는 닉네임 입니다.`);
 
       const SALT = Number(process.env.ADMIN_SALT);
       const hashedPassword = await bcrypt.hash(password, SALT);

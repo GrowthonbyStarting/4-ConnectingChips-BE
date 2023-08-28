@@ -7,6 +7,8 @@ import {
   UseInterceptors,
   UseGuards,
   Get,
+  Param,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { GroupService } from './group.service';
 import { CreateProjectDto } from './dto/create-group.dto';
@@ -33,8 +35,7 @@ export class GroupController {
 
   @Get('/:groupId')
   @Roles(ROLE.USER)
-  //@UseGuards(AuthGuard('jwt'))
-  find(@getUser() user: User) {
-    return this.groupService.getGroups(user);
+  find(@Param('groupId', ParseIntPipe) groupId: number) {
+    return this.groupService.getGroups(groupId);
   }
 }

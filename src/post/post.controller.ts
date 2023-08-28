@@ -30,6 +30,12 @@ export class PostController {
     @Param('groupId') groupId: number,
     @getUser() user: TUser,
   ) {
-    return this.postService.create(createPostDto, groupId, user, file);
+    return this.postService.create(createPostDto, groupId * 1, user, file);
+  }
+
+  @Get('/:postId')
+  @Roles(ROLE.USER)
+  find(@Param('postId') postId: number) {
+    return this.postService.findPost(postId * 1);
   }
 }
