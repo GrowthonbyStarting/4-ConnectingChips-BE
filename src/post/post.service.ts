@@ -18,16 +18,17 @@ export class PostService {
   ) {
     // const projectImage = await this.imagesService.create(file);
     // const image = { connect: { id: projectImage.id } };
+    const id = Number(groupId);
     const { contents } = createPostDto;
-    // const post = await this.prisma.$transaction([
-    //   this.prisma.post.create({
-    //     data: {
-    //       contents,
-    //       groupId,
-    //       userId: user.id,
-    //     },
-    //   }),
-    // ]);
-    console.log(user);
+    const post = await this.prisma.$transaction([
+      this.prisma.post.create({
+        data: {
+          contents,
+          groupId: id,
+          userId: user.id,
+        },
+      }),
+    ]);
+    return { result: `post 생성완료` };
   }
 }

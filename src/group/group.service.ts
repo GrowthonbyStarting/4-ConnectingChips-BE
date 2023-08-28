@@ -2,7 +2,7 @@ import { ImagesService } from '../image/images.service';
 import { PrismaService } from '../../prisma/prisma.service';
 import { Injectable } from '@nestjs/common';
 import { CreateProjectDto } from './dto/create-group.dto';
-import { Admin } from '@prisma/client';
+import { Admin, User } from '@prisma/client';
 
 @Injectable()
 export class GroupService {
@@ -29,5 +29,13 @@ export class GroupService {
       }),
     ]);
     return { result: `작심 생성 완료` };
+  }
+
+  async getGroups(user: User) {
+    const info = await this.prisma.group.findMany({
+      where: { id: user.id },
+      include: { Post: true },
+    });
+    return info;
   }
 }
