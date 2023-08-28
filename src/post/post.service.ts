@@ -12,23 +12,25 @@ export class PostService {
   ) {}
   async create(
     createPostDto: CreatePostDto,
-    //  file: Express.Multer.File,
     groupId: number,
     user: User,
+    file: Express.Multer.File,
   ) {
-    // const projectImage = await this.imagesService.create(file);
-    // const image = { connect: { id: projectImage.id } };
-    const id = Number(groupId);
+    const projectImage = await this.imageService.create(file);
+    const image = { connect: { id: projectImage.id } };
     const { contents } = createPostDto;
-    const post = await this.prisma.$transaction([
-      this.prisma.post.create({
-        data: {
-          contents,
-          groupId: id,
-          userId: user.id,
-        },
-      }),
-    ]);
-    return { result: `post 생성완료` };
+    const id = Number(groupId);
+
+    // const post = await this.prisma.$transaction([
+    //   this.prisma.post.create({
+    //     data: {
+    //       contents,
+    //       groupId: id,
+    //       userId: user.id,
+    //       image,
+    //     },
+    //   }),
+    // ]);
+    // return { result: `post 생성완료` };
   }
 }

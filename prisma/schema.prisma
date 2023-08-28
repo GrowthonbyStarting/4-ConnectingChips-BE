@@ -54,13 +54,13 @@ model Post {
   groupId   Int
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
-  Comment   Comment[]
   userId    Int
+  comment   Comment[]
 }
 
 model Comment {
   id     Int    @id @default(autoincrement())
-  Post   Post   @relation(fields: [postId], references: [id])
+  post   Post   @relation(fields: [postId], references: [id])
   postId Int
   text   String
 }

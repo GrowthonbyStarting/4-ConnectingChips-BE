@@ -30,11 +30,6 @@ export class PostController {
     @Param('groupId') groupId: number,
     @getUser() user: TUser,
   ) {
-    return this.postService.create(
-      createPostDto,
-      { groupId: Number(groupId) },
-      user,
-      file,
-    );
+    return this.postService.create(createPostDto, groupId, user, file);
   }
 }
