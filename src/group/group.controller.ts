@@ -28,7 +28,7 @@ export class GroupController {
     createProjectDto: CreateProjectDto,
     @UploadedFile() file: Express.Multer.File,
   ) {
-    return this.groupService.create(createProjectDto);
+    return this.groupService.create(createProjectDto, file);
   }
 
   @Get('/:groupId')
