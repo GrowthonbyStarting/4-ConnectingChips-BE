@@ -22,14 +22,14 @@ export class PostController {
   constructor(private readonly postService: PostService) {}
 
   @Post('/:groupId')
-  // @Roles(ROLE.USER)
+  @Roles(ROLE.USER)
   @UseInterceptors(FileInterceptor('file'))
   create(
     @Body() createPostDto: CreatePostDto,
-    // @UploadedFile() file: Express.Multer.File,
+    @UploadedFile() file: Express.Multer.File,
     @Param('groupId') groupId: number,
     @getUser() user: TUser,
   ) {
-    return this.postService.create(createPostDto, groupId, user);
+    return this.postService.create(createPostDto, groupId, user, file);
   }
 }
