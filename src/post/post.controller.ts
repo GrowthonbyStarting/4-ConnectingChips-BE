@@ -9,6 +9,7 @@ import {
   Delete,
   UseInterceptors,
   UploadedFile,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { PostService } from './post.service';
 import { CreatePostDto } from './dto/create-post.dto';
@@ -22,20 +23,20 @@ export class PostController {
   constructor(private readonly postService: PostService) {}
 
   @Post('/:groupId')
-  @Roles(ROLE.USER)
+  // @Roles(ROLE.USER)
   @UseInterceptors(FileInterceptor('file'))
   create(
     @Body() createPostDto: CreatePostDto,
     @UploadedFile() file: Express.Multer.File,
-    @Param('groupId') groupId: number,
+    @Param('groupId', ParseIntPipe) groupId: number,
     @getUser() user: TUser,
   ) {
-    return this.postService.create(createPostDto, groupId * 1, user, file);
+    return this.postService.create(createPostDto, groupId, user, file);
   }
 
   @Get('/:postId')
   @Roles(ROLE.USER)
-  find(@Param('postId') postId: number) {
-    return this.postService.findPost(postId * 1);
+  find(@Param('postId', ParseIntPipe) postId: number) {
+    return this.postService.findPost(postId);
   }
 }

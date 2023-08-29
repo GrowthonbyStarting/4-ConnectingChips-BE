@@ -11,20 +11,22 @@ export class GroupService {
     private readonly imagesService: ImagesService,
   ) {}
   async create(createProjectDto: CreateProjectDto, file: Express.Multer.File) {
-    const { title, tabs, intro, rule } = createProjectDto;
-    const groupImage = await this.imagesService.create(file);
-
-    const group = await this.prisma.$transaction([
-      this.prisma.group.create({
-        data: {
-          title,
-          tabs,
-          intro,
-          rule,
-          imageId: groupImage.id,
-        },
-      }),
-    ]);
+    await this.prisma.$transaction(async (prisma) => {
+      const { title, tabs, intro, rule } = createProjectDto;
+      const groupImage = await this.imagesService.create(file);
+      const group = await this.prisma.$transaction([
+        this.prisma.group.create({
+          data: {
+            title,
+            tabs,
+            intro,
+            rule,
+            Image: { connect: { id: groupImage.id } },
+          },
+        }),
+      ]);
+    });
+    return { result: '작심 생성 완료' };
   }
 
   async getGroups(groupId: number) {
@@ -32,7 +34,7 @@ export class GroupService {
     const info = await this.prisma.group.findMany({
       where: { id: groupId },
       include: {
-        image: true,
+        Image: true,
         Post: { include: { image: true } },
       },
     });

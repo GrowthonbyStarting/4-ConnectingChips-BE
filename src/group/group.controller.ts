@@ -23,7 +23,7 @@ export class GroupController {
   constructor(private readonly groupService: GroupService) {}
 
   @Post('/regist')
-  @Roles(ROLE.ADMIN)
+  // @Roles(ROLE.ADMIN)
   @UseInterceptors(FileInterceptor('file'))
   create(
     @Body()
