@@ -19,7 +19,7 @@ import { User as TUser } from '@prisma/client';
 export class CommentController {
   constructor(private readonly commentService: CommentService) {}
 
-  @Post('')
+  @Post('/:postId')
   @Roles(ROLE.USER)
   create(
     @Body() createCommentDto: CreateCommentDto,
@@ -30,7 +30,7 @@ export class CommentController {
   }
 
   @Get('/:postId')
-  //@Roles(ROLE.USER)
+  @Roles(ROLE.USER)
   findAll(@Param('postId', ParseIntPipe) postId: number) {
     return this.commentService.findAll(postId);
   }
