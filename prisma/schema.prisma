@@ -2,88 +2,92 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-  provider = "prisma-client-js"
+    provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "mysql"
-  url      = env("DATABASE_URL")
+    provider = "mysql"
+    url      = env("DATABASE_URL")
 }
 
 model User {
-  id                       Int       @id @default(autoincrement())
-  password                 String
-  nickname                 String    @unique
-  birthDate                String?
-  gender                   Gender?
-  yearAndMonthOfEmployment String?
-  companyEmail             String?
-  job                      String?
-  createAt                 DateTime? @default(now())
-  updateAt                 DateTime? @updatedAt
+    id                       Int       @id @default(autoincrement())
+    password                 String
+    nickname                 String    @unique
+    birthDate                String?
+    gender                   Gender?
+    yearAndMonthOfEmployment String?
+    companyEmail             String?
+    job                      String?
+    createAt                 DateTime? @default(now())
+    updateAt                 DateTime? @updatedAt
 }
 
 model Admin {
-  id        Int      @id @default(autoincrement())
-  nickname  String   @unique
-  password  String
-  createdAt DateTime @default(now())
-  upadateAt DateTime @updatedAt
+    id        Int      @id @default(autoincrement())
+    nickname  String   @unique
+    password  String
+    createdAt DateTime @default(now())
+    upadateAt DateTime @updatedAt
 }
 
 model Group {
-  id        Int      @id @default(autoincrement())
-  title     String
-  intro     String
-  rule      String
-  tabs      String
-  createdAt DateTime @default(now())
-  updatedAT DateTime @updatedAt
-  Tab       Tab[]
-  Post      Post[]
-  Image     Image[]
+    id        Int      @id @default(autoincrement())
+    title     String
+    intro     String
+    rule      String
+    tabs      String
+    createdAt DateTime @default(now())
+    updatedAT DateTime @updatedAt
+    Post      Post[]
+    Image     Image[]
 }
 
 model Post {
-  id        Int       @id @default(autoincrement())
-  contents  String
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  userId    Int
-  Comment   Comment[]
-  Group     Group?    @relation(fields: [groupId], references: [id])
-  groupId   Int
-  image     Image[]
+    id        Int       @id @default(autoincrement())
+    contents  String
+    createdAt DateTime  @default(now())
+    updatedAt DateTime  @updatedAt
+    userId    Int
+    Comment   Comment[]
+    Group     Group?    @relation(fields: [groupId], references: [id])
+    groupId   Int
+    image     Image[]
 }
 
 model Comment {
-  id     Int    @id @default(autoincrement())
-  post   Post   @relation(fields: [postId], references: [id])
-  postId Int
-  text   String
+    id        Int      @id @default(autoincrement())
+    post      Post     @relation(fields: [postId], references: [id])
+    postId    Int
+    text      String
+    userId    Int
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+    Reply     Reply[]
 }
 
-model Tab {
-  id      Int    @id @default(autoincrement())
-  title   String
-  type    String
-  group   Group? @relation(fields: [groupId], references: [id])
-  groupId Int?
+model Reply {
+    id        Int      @id @default(autoincrement())
+    text      String
+    createdAt DateTime @default(now())
+    updatedAt DateTime
+    comment   Comment? @relation(fields: [commentId], references: [id])
+    commentId Int?
 }
 
 model Image {
-  id        Int      @id @default(autoincrement())
-  url       String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt()
-  key       String
-  Post      Post?    @relation(fields: [postId], references: [id])
-  postId    Int?
-  Group     Group?   @relation(fields: [groupId], references: [id])
-  groupId   Int?
+    id        Int      @id @default(autoincrement())
+    url       String
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt()
+    key       String
+    Post      Post?    @relation(fields: [postId], references: [id])
+    postId    Int?
+    Group     Group?   @relation(fields: [groupId], references: [id])
+    groupId   Int?
 }
 
 enum Gender {
-  male
-  female
+    male
+    female
 }

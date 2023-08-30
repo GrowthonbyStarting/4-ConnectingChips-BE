@@ -12,6 +12,8 @@ import { AppController } from './app.controller';
 import { UserModule } from './account/user/user.module';
 import { ConfigModule } from '@nestjs/config';
 import { PostModule } from './post/post.module';
+import { CommentModule } from './comment/comment.module';
+import { ReplyModule } from './reply/reply.module';
 
 @Module({
   imports: [
@@ -23,6 +25,8 @@ import { PostModule } from './post/post.module';
     S3Module,
     ImagesModule,
     PostModule,
+    CommentModule,
+    ReplyModule,
   ],
   controllers: [AppController],
   providers: [AppService, { provide: APP_GUARD, useClass: RolesGuard }],
