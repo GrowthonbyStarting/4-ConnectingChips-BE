@@ -1,20 +1,38 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  ParseIntPipe,
+} from '@nestjs/common';
+import { ROLE } from 'src/constant/account.constant';
+import { Roles } from 'src/decorators/roles.decorator';
+import { getUser } from 'src/decorators/user.decorator';
 import { CommentService } from './comment.service';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { UpdateCommentDto } from './dto/update-comment.dto';
-
+import { User as TUser } from '@prisma/client';
 @Controller('comment')
 export class CommentController {
   constructor(private readonly commentService: CommentService) {}
 
-  @Post()
-  create(@Body() createCommentDto: CreateCommentDto) {
-    return this.commentService.create(createCommentDto);
+  @Post('')
+  @Roles(ROLE.USER)
+  create(
+    @Body() createCommentDto: CreateCommentDto,
+    @Param('postId', ParseIntPipe) postId: number,
+    @getUser() user: TUser,
+  ) {
+    return this.commentService.create(createCommentDto, postId, user);
   }
 
-  @Get()
-  findAll() {
-    return this.commentService.findAll();
+  @Get('/:postId')
+  //@Roles(ROLE.USER)
+  findAll(@Param('postId', ParseIntPipe) postId: number) {
+    return this.commentService.findAll(postId);
   }
 
   @Get(':id')

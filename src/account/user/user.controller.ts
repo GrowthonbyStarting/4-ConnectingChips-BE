@@ -9,7 +9,8 @@ import {
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto, SignInDto } from './dto/create-user.dto';
-
+import { getUser } from 'src/decorators/user.decorator';
+import { User as TUser } from '@prisma/client';
 @Controller('users')
 export class UserController {
   constructor(private readonly userService: UserService) {}
@@ -21,5 +22,11 @@ export class UserController {
   @Post('/sign-in')
   login(@Body() signInDto: SignInDto) {
     return this.userService.login(signInDto);
+  }
+
+  @Get('mylist')
+  getList(@getUser() user: TUser) {
+    console.log('here');
+    return this.userService.find(user);
   }
 }

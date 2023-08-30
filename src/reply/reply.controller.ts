@@ -6,18 +6,24 @@ import {
   Patch,
   Param,
   Delete,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { ReplyService } from './reply.service';
 import { CreateReplyDto } from './dto/create-reply.dto';
 import { UpdateReplyDto } from './dto/update-reply.dto';
-
+import { getUser } from 'src/decorators/user.decorator';
+import { User as TUser } from '@prisma/client';
 @Controller('reply')
 export class ReplyController {
   constructor(private readonly replyService: ReplyService) {}
 
   @Post()
-  create(@Body() createReplyDto: CreateReplyDto) {
-    return this.replyService.create(createReplyDto);
+  create(
+    @Body() createReplyDto: CreateReplyDto,
+    @getUser() user: TUser,
+    @Param('postId', ParseIntPipe) postId: number,
+  ) {
+    return this.replyService.create(createReplyDto, user, postId);
   }
 
   @Get()

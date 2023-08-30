@@ -1,11 +1,9 @@
-import { User } from '@prisma/client';
 import {
   Controller,
   Post,
   Body,
   UploadedFile,
   UseInterceptors,
-  UseGuards,
   Get,
   Param,
   ParseIntPipe,
@@ -15,22 +13,31 @@ import { CreateProjectDto } from './dto/create-group.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Roles } from 'src/decorators/roles.decorator';
 import { ROLE } from 'src/constant/account.constant';
-import { AuthGuard } from '@nestjs/passport';
 import { getUser } from 'src/decorators/user.decorator';
-
+import { User as TUser } from '@prisma/client';
 @Controller('groups')
 export class GroupController {
   constructor(private readonly groupService: GroupService) {}
 
   @Post('/regist')
-  // @Roles(ROLE.ADMIN)
+  @Roles(ROLE.ADMIN)
   @UseInterceptors(FileInterceptor('file'))
   create(
     @Body()
     createProjectDto: CreateProjectDto,
     @UploadedFile() file: Express.Multer.File,
+    @getUser() user: TUser,
   ) {
-    return this.groupService.create(createProjectDto, file);
+    return this.groupService.create(createProjectDto, file, user);
+  }
+
+  @Post('/:groupId')
+  @Roles(ROLE.USER)
+  joinGroup(
+    @Param('groupId', ParseIntPipe) groupId: number,
+    @getUser() user: TUser,
+  ) {
+    return this.groupService.join(groupId, user);
   }
 
   @Get('/:groupId')

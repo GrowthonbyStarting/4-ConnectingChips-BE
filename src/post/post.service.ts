@@ -19,16 +19,14 @@ export class PostService {
     await this.prisma.$transaction(async (prisma) => {
       const { contents } = createPostDto;
       const postImage = await this.imageService.create(file);
-      const post = await this.prisma.$transaction([
-        this.prisma.post.create({
-          data: {
-            contents,
-            userId: user.id,
-            groupId,
-            image: { connect: { id: postImage.id } },
-          },
-        }),
-      ]);
+      const post = await this.prisma.post.create({
+        data: {
+          contents,
+          userId: user.id,
+          groupId,
+          image: { connect: { id: postImage.id } },
+        },
+      });
     });
 
     return { result: `post 생성완료` };
@@ -37,7 +35,7 @@ export class PostService {
   async findPost(postId: number) {
     const post = this.prisma.post.findMany({
       where: { id: postId },
-      include: { image: true },
+      include: { image: true, Comment: true },
     });
     return post;
   }

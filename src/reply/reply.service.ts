@@ -1,3 +1,4 @@
+import { User } from '@prisma/client';
 import { PrismaService } from './../../prisma/prisma.service';
 import { Injectable } from '@nestjs/common';
 import { CreateReplyDto } from './dto/create-reply.dto';
@@ -6,10 +7,7 @@ import { UpdateReplyDto } from './dto/update-reply.dto';
 @Injectable()
 export class ReplyService {
   constructor(private readonly prisma: PrismaService) {}
-  async create(createReplyDto: CreateReplyDto) {
-    const { text } = createReplyDto;
-    const reply = await this.prisma.reply.create({ data: text });
-  }
+  async create(createReplyDto: CreateReplyDto, user: User, postId: number) {}
 
   findAll() {
     return `This action returns all reply`;

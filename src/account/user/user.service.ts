@@ -1,10 +1,12 @@
+import { User } from '@prisma/client';
 import { sign, JwtPayload } from 'jsonwebtoken';
 import { PrismaService } from '../../../prisma/prisma.service';
-import { Injectable, BadRequestException } from '@nestjs/common';
+import { Injectable, BadRequestException, Post } from '@nestjs/common';
 import { CreateUserDto, SignInDto } from './dto/create-user.dto';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { ROLE } from 'src/constant/account.constant';
+import { group } from 'console';
 @Injectable()
 export class UserService {
   constructor(private prisma: PrismaService, private jwtService: JwtService) {}
@@ -55,5 +57,20 @@ export class UserService {
     return {
       access_token: token,
     };
+  }
+
+  async find(user: User) {
+    const info = await this.prisma.user.findUnique({
+      where: { id: user.id },
+      include: {
+        userJoinGroup: { include: { Group: { include: { Image: true } } } },
+      },
+    });
+
+    if (info) {
+      return info.userJoinGroup;
+    } else {
+      return [];
+    }
   }
 }
