@@ -12,7 +12,6 @@ services:
       - /etc/letsencrypt:/etc/letsencrypt #letsencrypt폴더 위치
     environment:
       - TZ=Asia/Seoul
-    depends_on:
   db:
     image: mysql
     volumes:
