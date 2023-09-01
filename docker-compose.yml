@@ -1,12 +1,25 @@
 version: '3.0'
 services:
+  nignx:
+    image: nginx
+    restart: always
+    ports:
+      - "80:80/tcp"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+    environment:
+      - TZ=Asia/Seoul
+    depends_on:
+      - server
+      - db  
   db:
     image: mysql
     volumes:
             - "./.data/db:/var/lib/mysql"
     environment:
-      MYSQL_DATABASE: chips
-      MYSQL_ROOT_PASSWORD: 1234
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_ROOT_PASSWOR=${MYSQL_ROOT_PASSWOR}
     command: 
       --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
     ports:
@@ -18,7 +31,7 @@ services:
     environment:
       - NODE_ENV=development
       - PORT=${PORT}
-      - DATABASE_URL=mysql://root:1234@db:3306/chips
+      - DATABASE_URL=mysql://root:{MYSQL_ROOT_PASSWOR}@db:3306/chips
       - MYSQL_CHARSET=utf8mb4
       - JWT_SECRET=${JWT_SECRET}
       - S3_REGION=${S3_REGION}
