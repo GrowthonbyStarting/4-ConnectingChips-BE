@@ -1,26 +1,16 @@
 version: '3.0'
 services:
-  nignx:
+  nginx:
     image: nginx
-    container_name: nginx-proxy
-    restart: always
     ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - /etc/letsencrypt:/etc/letsencrypt
-      - /var/lib/letsencrypt:/var/lib/letsencrypt
+      - "80:80"  # HTTP 포트
+      - "443:443"  # HTTPS 포트
     environment:
-      - TZ=Asia/Seoul
-  certbot:
-    depends_on:
-      - nginx
-    image: certbot
-    container_name: certbot
+      - VIRTUAL_HOST=${VIRTUAL_HOST}  # 도메인 이름 설정
+      - LETSENCRYPT_HOST=${LETSENCRYPT_HOST}  # 도메인 이름 설정
+      - LETSENCRYPT_EMAIL=${LETSENCRYPT_EMAIL}  # Let's Encrypt 연락처 이메일 설정
     volumes:
-      - ./certbot/etc:/etc/letsencrypt
-      - ./certbot/var:/var/lib/letsencrypt
-      - ./www:/var/www/html
+      - /etc/letsencrypt:/etc/letsencrypt:ro  # 인증서 디렉토리 마운트
   db:
     image: mysql
     volumes:
