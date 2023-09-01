@@ -13,8 +13,6 @@ services:
     environment:
       - TZ=Asia/Seoul
     depends_on:
-      - server
-      - db  
   db:
     image: mysql
     volumes:
