@@ -1,29 +1,33 @@
-import { JwtService } from '@nestjs/jwt';
+import { ROLE } from './../../constant/account.constant';
+// import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from './../../../prisma/prisma.service';
 import { Injectable, BadRequestException } from '@nestjs/common';
 import { CreateAdminDto, SignInDto } from './dto/create-admin.dto';
-import { UpdateAdminDto } from './dto/update-admin.dto';
-import * as bcrypt from 'bcrypt';
 
+import * as bcrypt from 'bcrypt';
+import { JwtPayload, sign } from 'jsonwebtoken';
 @Injectable()
 export class AdminService {
-  constructor(private prisma: PrismaService, private jwtService: JwtService) {}
+  constructor(private prisma: PrismaService) {}
   async create(createAdminDto: CreateAdminDto) {
     await this.prisma.$transaction(async (prisma) => {
-      const { email, password } = createAdminDto;
+      const { nickname, password, adminSignUpSecret } = createAdminDto;
+
+      if (adminSignUpSecret !== process.env.ADMIN_SIGNUP_SECRET)
+        throw new BadRequestException('');
       const existingUser = await this.prisma.admin.findUnique({
-        where: { email },
+        where: { nickname },
       });
 
       if (existingUser)
-        throw new BadRequestException(`User(${email}) is exist.`);
+        throw new BadRequestException(`이미 존재하는 닉네임 입니다.`);
 
       const SALT = Number(process.env.ADMIN_SALT);
       const hashedPassword = await bcrypt.hash(password, SALT);
 
       const admin = await prisma.admin.create({
         data: {
-          email,
+          nickname,
           password: hashedPassword,
         },
       });
@@ -31,23 +35,30 @@ export class AdminService {
     return { result: '회원가입 성공' };
   }
   async login(signInDto: SignInDto) {
-    const { email, password } = signInDto;
+    const { nickname, password } = signInDto;
 
-    const user = await this.prisma.admin.findUnique({
-      where: { email },
+    const admin = await this.prisma.admin.findUnique({
+      where: { nickname },
     });
 
-    if (!user)
-      throw new BadRequestException(`email이나 password를 확인해주세요`);
+    if (!admin)
+      throw new BadRequestException(`nickname이나 password를 확인해주세요`);
 
-    const validatePassword = await bcrypt.compare(password, user.password);
+    const validatePassword = await bcrypt.compare(password, admin.password);
 
-    if (!validatePassword) {
-      throw new BadRequestException(`email이나 password를 확인해주세요`);
+    if (!nickname || !validatePassword) {
+      throw new BadRequestException(`nickname이나 password를 확인해주세요`);
     }
-    const payload = { id: user.id };
+    const payload: JwtPayload = {
+      sub: admin.nickname,
+      role: ROLE.ADMIN,
+    };
+    const secret = process.env.ADMIN_JWT_SECRET;
+    const expiresIn = '3h';
+    const token = sign(payload, secret, { expiresIn });
+
     return {
-      access_token: await this.jwtService.signAsync(payload),
+      access_token: token,
     };
   }
 }

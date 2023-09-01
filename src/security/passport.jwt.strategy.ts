@@ -5,7 +5,7 @@ import { PrismaService } from '../../prisma/prisma.service';
 
 type Payload = {
   id: number;
-  email: string;
+  username: string;
 };
 
 @Injectable()
@@ -13,15 +13,15 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(private prisma: PrismaService) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-      ignoreExpiration: true,
+      ignoreExpiration: false,
       secretOrKey: process.env.JWT_SECRET,
     });
   }
-
   async validate(payload: Payload, done: VerifiedCallback): Promise<any> {
     const user = await this.prisma.user.findFirst({
       where: { id: payload.id },
     });
+
     if (!user) {
       return done(
         new UnauthorizedException({ message: 'user does not exist' }),

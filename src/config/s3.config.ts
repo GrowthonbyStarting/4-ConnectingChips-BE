@@ -1,1 +1,1 @@
-// export const S3_BUCKET_NAME = 'connecting-chips';
+export const S3_BUCKET_NAME = 'connecting-chips';

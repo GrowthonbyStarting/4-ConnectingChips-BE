@@ -1,27 +1,24 @@
+import { User } from '@prisma/client';
+import { sign, JwtPayload } from 'jsonwebtoken';
 import { PrismaService } from '../../../prisma/prisma.service';
-import { Injectable, BadRequestException } from '@nestjs/common';
+import { Injectable, BadRequestException, Post } from '@nestjs/common';
 import { CreateUserDto, SignInDto } from './dto/create-user.dto';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
+import { ROLE } from 'src/constant/account.constant';
+import { group } from 'console';
 @Injectable()
 export class UserService {
   constructor(private prisma: PrismaService, private jwtService: JwtService) {}
   async create(createUserDto: CreateUserDto) {
     await this.prisma.$transaction(async (prisma) => {
-      const {
-        nickname,
-        password,
-        confirmPassword,
-        birthDate,
-        gender,
-        yearAndMonthOfEmployment,
-      } = createUserDto;
+      const { nickname, password, confirmPassword } = createUserDto;
       const existingUser = await this.prisma.user.findUnique({
         where: { nickname },
       });
 
       if (existingUser)
-        throw new BadRequestException(`User(${nickname}) is exist.`);
+        throw new BadRequestException(`이미 존재하는 닉네임 입니다.`);
 
       if (password !== confirmPassword)
         throw new BadRequestException(`비밀번호를 확인해 주세요`);
@@ -30,13 +27,7 @@ export class UserService {
       const hashedPassword = await bcrypt.hash(password, SALT);
 
       const user = await prisma.user.create({
-        data: {
-          nickname,
-          password: hashedPassword,
-          birthDate,
-          gender,
-          yearAndMonthOfEmployment,
-        },
+        data: { nickname, password: hashedPassword },
       });
     });
     return { result: '회원가입 성공' };
@@ -50,16 +41,36 @@ export class UserService {
     });
 
     if (!user)
-      throw new BadRequestException(`email이나 password를 확인해주세요`);
+      throw new BadRequestException(`nickname 또는 password를 확인해주세요`);
 
     const validatePassword = await bcrypt.compare(password, user.password);
 
     if (!validatePassword) {
-      throw new BadRequestException(`email이나 password를 확인해주세요`);
+      throw new BadRequestException(`nickname 또는 password를 확인해주세요`);
     }
-    const payload = { id: user.id };
+    const payload: JwtPayload = { sub: user.nickname, role: ROLE.USER };
+
+    const secret = process.env.USER_JWT_SECRET;
+    const expiresIn = '3h';
+    const token = sign(payload, secret, { expiresIn });
+
     return {
-      access_token: await this.jwtService.signAsync(payload),
+      access_token: token,
     };
+  }
+
+  async find(user: User) {
+    const info = await this.prisma.user.findUnique({
+      where: { id: user.id },
+      include: {
+        userJoinGroup: { include: { Group: { include: { Image: true } } } },
+      },
+    });
+
+    if (info) {
+      return info.userJoinGroup;
+    } else {
+      return [];
+    }
   }
 }

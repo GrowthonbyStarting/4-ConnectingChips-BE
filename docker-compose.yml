@@ -1,11 +1,25 @@
 version: '3.0'
 services:
+  nginx:
+    image: nginx
+    ports:
+      - "80:80"  # HTTP 포트
+      - "443:443"  # HTTPS 포트
+    environment:
+      - VIRTUAL_HOST=${VIRTUAL_HOST}  # 도메인 이름 설정
+      - LETSENCRYPT_HOST=${LETSENCRYPT_HOST}  # 도메인 이름 설정
+      - LETSENCRYPT_EMAIL=${LETSENCRYPT_EMAIL}  # Let's Encrypt 연락처 이메일 설정
+    volumes:
+      - /etc/letsencrypt:/etc/letsencrypt:ro  # 인증서 디렉토리 마운트
   db:
     image: mysql
+    volumes:
+      - "./.data/db:/var/lib/mysql"
     environment:
-      MYSQL_DATABASE: chips
-      MYSQL_ROOT_PASSWORD: 1234
-    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+    command: 
+      --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
     ports:
       - '3306:3306'
   server:
@@ -15,9 +29,16 @@ services:
     environment:
       - NODE_ENV=development
       - PORT=${PORT}
-      - DATABASE_URL=mysql://root:1234@db:3306/chips
+      - DATABASE_URL=mysql://root:${MYSQL_ROOT_PASSWORD}@db:3306/chips
       - MYSQL_CHARSET=utf8mb4
       - JWT_SECRET=${JWT_SECRET}
+      - S3_REGION=${S3_REGION}
+      - S3_AWSACCESS_KEY_ID=${S3_AWSACCESS_KEY_ID}
+      - S3_AWS_SECRET_ACCESS_KEY=${S3_AWS_SECRET_ACCESS_KEY}
+      - CLOUD_FRONT_URL=${CLOUD_FRONT_URL}
+      - ADMIN_SIGNUP_SECRET=${ADMIN_SIGNUP_SECRET}
+      - ADMIN_JWT_SECRET=${ADMIN_JWT_SECRET}
+      - USER_JWT_SECRET=${USER_JWT_SECRET}
     ports:
       - '3000:3000'
     restart: always

@@ -1,51 +1,48 @@
-import { ROLE } from '../constant/account.constant';
 import {
   Controller,
-  Get,
   Post,
   Body,
-  Patch,
-  Param,
-  Delete,
   UploadedFile,
   UseInterceptors,
+  Get,
+  Param,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { GroupService } from './group.service';
 import { CreateProjectDto } from './dto/create-group.dto';
-import { Roles } from 'src/decorators/roles.decorator';
 import { FileInterceptor } from '@nestjs/platform-express';
-
+import { Roles } from 'src/decorators/roles.decorator';
+import { ROLE } from 'src/constant/account.constant';
+import { getUser } from 'src/decorators/user.decorator';
+import { User as TUser } from '@prisma/client';
 @Controller('groups')
 export class GroupController {
   constructor(private readonly groupService: GroupService) {}
 
   @Post('/regist')
-  @UseInterceptors(FileInterceptor('file'))
   @Roles(ROLE.ADMIN)
+  @UseInterceptors(FileInterceptor('file'))
   create(
-    @Body() createProjectDto: CreateProjectDto,
+    @Body()
+    createProjectDto: CreateProjectDto,
     @UploadedFile() file: Express.Multer.File,
+    @getUser() user: TUser,
   ) {
-    return this.groupService.create(createProjectDto, file);
+    return this.groupService.create(createProjectDto, file, user);
   }
 
-  // @Get()
-  // findAll() {
-  //   return this.projectService.findAll();
-  // }
+  @Post('/:groupId')
+  @Roles(ROLE.USER)
+  joinGroup(
+    @Param('groupId', ParseIntPipe) groupId: number,
+    @getUser() user: TUser,
+  ) {
+    return this.groupService.join(groupId, user);
+  }
 
-  // @Get(':id')
-  // findOne(@Param('id') id: string) {
-  //   return this.projectService.findOne(+id);
-  // }
-
-  // @Patch(':id')
-  // update(@Param('id') id: string, @Body() updateProjectDto: UpdateProjectDto) {
-  //   return this.projectService.update(+id, updateProjectDto);
-  // }
-
-  // @Delete(':id')
-  // remove(@Param('id') id: string) {
-  //   return this.projectService.remove(+id);
-  // }
+  @Get('/:groupId')
+  @Roles(ROLE.USER)
+  find(@Param('groupId', ParseIntPipe) groupId: number) {
+    return this.groupService.getGroups(groupId);
+  }
 }
