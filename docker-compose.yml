@@ -7,7 +7,7 @@ services:
       - "80:80/tcp"
       - "443:443"
     volumes:
-      - ./nginx.conf:/etc/nginx/nginx.conf
+      - ./proxy/nginx.conf:/etc/nginx/nginx.conf
     environment:
       - TZ=Asia/Seoul
     depends_on:
@@ -41,7 +41,6 @@ services:
       - ADMIN_SIGNUP_SECRET=${ADMIN_SIGNUP_SECRET}
       - ADMIN_JWT_SECRET=${ADMIN_JWT_SECRET}
       - USER_JWT_SECRET=${USER_JWT_SECRET}
-
     ports:
       - '3000:3000'
     restart: always
