@@ -2,14 +2,15 @@ version: '3.0'
 services:
   nignx:
     image: nginx
+    container_name: nginx-proxy
     restart: always
     ports:
       - "80:80"
       - "443:443"
     volumes:
-      - ./nginx/conf.d:/etc/nginx/conf.d
-      - ./nginx/log:/var/log/nginx
-      - ./www:/var/www/html
+      - /nginx/default.conf:/etc/nginx/conf.d/default.conf
+      - /var/log/nginx:/var/log/nginx # log파일의 위치
+      - /etc/letsencrypt:/etc/letsencrypt #letsencrypt폴더 위치
     environment:
       - TZ=Asia/Seoul
   certbot:
